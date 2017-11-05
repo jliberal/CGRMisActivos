@@ -1,0 +1,30 @@
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core" 
+	xmlns:mvc="sap.ui.core.mvc" 
+	xmlns:f="sap.ui.layout.form"
+	xmlns="sap.m"
+	height="100%"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	<f:SimpleForm id="TypeId" 
+			layout="ResponsiveGridLayout" 
+			editable="true" 
+			maxContainerCols="2" 
+			labelSpanL="3" 
+			labelSpanM="3" 
+			emptySpanL="4" 
+			emptySpanM="4" 
+			columnsL="1" 
+			columnsM="1" 
+			title="{i18n>NotifyTitle}">
+			<Label text="{i18n>notifType}"/>
+			<ComboBox id="cbNotif" selectionChange="onSelectionNotif"  items="{ path: 'detailView>/notifType', sorter: { path: 'text' } }">
+				<core:Item key="{detailView>Zzcodsol}" text="{detailView>Zzdesc}"/>
+			</ComboBox>
+			<Label text="{i18n>cause}"/>
+			<ComboBox id="cbCause" selectionChange="onSelectionCause" items="{ path: 'detailView>/causeType', sorter: { path: 'text' } }">
+				<core:Item key="{detailView>Zzcodmot}" text="{detailView>Zzdesc}"/>
+			</ComboBox>
+			<Label text="{i18n>notifDesc}"/>
+			<TextArea id="__area0" rows="4" value="{detailView>/notifText}" />
+	</f:SimpleForm>	
+</core:FragmentDefinition>	

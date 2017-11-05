@@ -1,0 +1,67 @@
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core" 
+	xmlns:mvc="sap.ui.core.mvc" 
+	xmlns="sap.m"
+	height="100%"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	<Table id="idLoansTable"  
+		items="{masterView>/myAssets}">
+		<headerToolbar>
+				<Toolbar>
+					<Title text="{i18n>ActTabTitle}" level="H2"/>
+					<ToolbarSpacer/>
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://multiselect-all" press="onSelectAllAssets"/>
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://multiselect-none" press="onSelectNoneAssets"/>
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://pdf-attachment" press="onPdfAssets"/>
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://excel-attachment" press="OnExcelAssets"/>
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://filter" press="onFilterLoans"/>
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://sort" press="onSortAssets"/>
+					<SearchField
+						id="searchFieldLoan"
+						search="onSearchLocationAssets"
+						tooltip="{i18n>worklistSearchTooltip}"
+						width="auto"/>
+				</Toolbar>
+		</headerToolbar>
+		<columns>
+			<!--<Column id="nameColumn0">
+				<Text text="{i18n>actCol0}" id="LtextColumn0" />
+			</Column>-->
+			<Column id="LnameColumn1">
+				<Text text="{i18n>actCol1}" id="LtextColumn1" />
+			</Column>
+			<Column id="LnameColumn2">
+				<Text text="{i18n>actCol2}" id="LtextColumn2" />
+			</Column>
+			<Column id="LnameColumn3">
+				<Text text="{i18n>actCol3}" id="LtextColumn3" />
+			</Column>
+			<Column id="LnameColumn4">
+				<Text text="{i18n>actCol4}" id="LtextColumn4" />
+			</Column>
+			<Column id="LnameColumn5">
+				<Text text="{i18n>actCol5}" id="LtextColumn5" />
+			</Column>
+			<Column id="LnameColumn6">
+				<Text text="{i18n>actCol6}" id="LtextColumn6" />
+			</Column>
+			<Column id="LnameColumn7">
+				<Text text="{i18n>actCol7}" id="LtextColumn7" />
+			</Column>			
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<!--<CheckBox selected="{masterView>Selec}" enabled="{= ${masterView>Activo} === 'X' ? true:false}" />-->
+					<Text text="{masterView>Anln1}" />
+					<Text text="{masterView>Txt50}" />
+					<Text text="{masterView>Zzserieampliado}" />
+					<Text text="{masterView>ZzasignaUsu}" />
+					<Text text="{masterView>ZzubicTecn}" />
+					<Text text="{masterView>Pltxt}" />
+					<Text text="{masterView>Zzestadotxt}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</core:FragmentDefinition>

@@ -1,0 +1,82 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" 
+	xmlns:core="sap.ui.core" 
+	xmlns="sap.m" 
+	xmlns:t="sap.ui.table" 
+	xmlns:u="sap.ui.unified"
+	xmlns:semantic="sap.m.semantic" 
+	controllerName="cl.cgr.everis.developmentsCRGMisActivos.controller.Master">
+	<semantic:FullscreenPage id="page1" title="{i18n>title}">
+		<semantic:content>
+			<ObjectHeader	title="{i18n>location}" 
+							titleActive="false" 
+							id="__header0">
+			</ObjectHeader>
+			<IconTabBar expandable="false" 
+				expanded="true" 
+				select="onSelectChanged"
+				applyContentPadding="false" 
+				backgroundDesign="Solid" 
+				upperCase="false" 
+				visible="true" 
+				class="sapUiResponsiveContentPadding"
+				selectedKey="Ok">
+				<items>
+					<IconTabFilter 
+						key="tabFilter1"
+						icon="sap-icon://kpi-managing-my-area"
+						iconColor="Positive" 
+						text="{i18n>tabName1}"
+						count="{masterView>/myAssetsCount}"
+						design="Vertical" 
+						showAll="false" 
+						textDirection="Inherit" 
+						enabled="true" 
+						visible="true" 
+						iconDensityAware="false">
+						<content>
+							<core:Fragment fragmentName="cl.cgr.everis.developmentsCRGMisActivos.view.myAssetsTab" type="XML" />
+						</content>
+					</IconTabFilter>	
+					<IconTabFilter 
+						key="tabFilter2"
+						icon="sap-icon://home-share" 
+						iconColor="Default" 
+						count="{masterView>/myLoansCount}"
+						text="{i18n>tabName2}" 
+						design="Vertical" 
+						showAll="false" 
+						textDirection="Inherit" 
+						enabled="true" 
+						visible="true" 
+						iconDensityAware="false">
+						<content>
+							<core:Fragment fragmentName="cl.cgr.everis.developmentsCRGMisActivos.view.myLoansTab" type="XML" />
+						</content>
+					</IconTabFilter>
+					<IconTabFilter 
+						key="tabFilter3"
+						icon="sap-icon://request" 
+						iconColor="Critical" 
+						text="{i18n>tabName3}" 
+						design="Vertical" 
+						showAll="false" 
+						textDirection="Inherit" 
+						enabled="true" 
+						visible="true" 
+						iconDensityAware="false">
+						<content>
+							
+						</content>
+					</IconTabFilter>
+				</items>
+			</IconTabBar>
+		</semantic:content>
+		<semantic:customFooterContent>
+			<Button text="Notificar" 
+				type="Accept" 
+				icon="sap-icon://save" 
+				iconDensityAware="false" 
+				press="_onButtonPress11"/>
+		</semantic:customFooterContent>
+	</semantic:FullscreenPage>
+</mvc:View>

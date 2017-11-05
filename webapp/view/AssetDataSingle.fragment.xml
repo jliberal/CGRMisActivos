@@ -1,0 +1,40 @@
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core" 
+	xmlns:mvc="sap.ui.core.mvc" 
+	xmlns="sap.m"
+	height="100%"
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	<f:SimpleForm 
+		id="AssetForm" 
+		layout="ResponsiveGridLayout" 
+		editable="true" 
+		visible="true"
+		maxContainerCols="2" 
+		labelSpanL="3" 
+		labelSpanM="3" 
+		emptySpanL="4" 
+		emptySpanM="4" 
+		columnsL="1" 
+		columnsM="1"
+		title="{i18n>AssetData}">
+		<f:content>
+			<Label text="{i18n>AssetFormLabel1}" id="__label11"/>
+			<Text text="{masterData>/Anln1}" id="__text1"/>
+			<Label text="{i18n>AssetFormLabel2}" id="__label12"/>
+			<Text text="{masterData>/Txt50}" id="__text2"/>
+			<Label text="{i18n>AssetFormLabel3}" id="__label13"/>
+			<Text text="{masterData>/Zzserieampliado}" id="__text3"/>
+			<Label text="{i18n>AssetFormLabel4}" id="__label14"/>
+			<Text text="{masterData>/ZzasignaUsu}" id="__text4"/>
+			<Label text="{i18n>AssetFormLabel5}" id="__label15"/>
+			<Text text="{masterData>/Fecasig}" id="__text5"/>
+			<Label text="{i18n>AssetFormLabel6}" id="__label16"/>
+			<Text text="{masterData>/ZzubicTecn}" id="__text6"/>
+			<Label text="{i18n>AssetFormLabel7}" id="__label17"/>
+			<Text text="{masterData>/Pltxt}" id="__text7"/>
+			<Label text="{i18n>AssetFormLabel8}" id="__label18"/>
+			<Text text="{masterData>/Zestadotxt}" id="__text8"/>
+		</f:content>
+	</f:SimpleForm>		
+</core:FragmentDefinition>

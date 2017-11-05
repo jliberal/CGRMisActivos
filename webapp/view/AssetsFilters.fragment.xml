@@ -1,0 +1,20 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <ViewSettingsDialog
+		confirm="handleFilterConfirm"
+		cancel="handleFilterCancel"
+		filterItems="{masterView>/myCurrentFilters}"
+		resetFilters="handleFilterReset">
+        <filterItems>
+            <ViewSettingsFilterItem
+				text="{masterView>text}"
+				key="{masterView>field}"
+				items="{masterView>items}">
+            	<items>
+            		<ViewSettingsItem text="{masterView>text}" key="{masterView>text}" />
+            	</items>
+            </ViewSettingsFilterItem>
+        </filterItems>
+    </ViewSettingsDialog>
+</core:FragmentDefinition>

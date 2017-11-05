@@ -1,0 +1,24 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" 
+	xmlns:core="sap.ui.core" 
+	xmlns="sap.m" 
+	xmlns:t="sap.ui.table" 
+	xmlns:u="sap.ui.unified" 
+	xmlns:f="sap.ui.layout.form" 
+	xmlns:semantic="sap.m.semantic" 
+	controllerName="cl.cgr.everis.developmentsCRGMisActivos.controller.Detail">
+	<semantic:FullscreenPage id="page2" title="{i18n>title}" showNavButton="true" navButtonPress="onNavBackFromDetail"> 
+		<VBox class="sapUiSmallMargin">
+			<items>
+				<!--Datos Activo individual-->
+				<core:Fragment fragmentName="cl.cgr.everis.developmentsCRGMisActivos.view.AssetDataSingle" type="XML" />
+				<!--Data Activo múltiple-->
+				<core:Fragment fragmentName="cl.cgr.everis.developmentsCRGMisActivos.view.AssetDataMultiple" type="XML" />				
+				<!--Notificación-->
+				<core:Fragment fragmentName="cl.cgr.everis.developmentsCRGMisActivos.view.NotificationData" type="XML" />
+			</items>
+		</VBox>		
+		<semantic:customFooterContent>		
+			<Button text="{i18n>notifButton}" type="Accept" press="doNotification" width="100px" id="__button1" icon="sap-icon://notification"/>		
+		</semantic:customFooterContent>		
+	</semantic:FullscreenPage>
+</mvc:View>
