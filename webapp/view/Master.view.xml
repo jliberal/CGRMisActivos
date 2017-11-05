@@ -58,6 +58,7 @@
 						icon="sap-icon://request" 
 						iconColor="Critical" 
 						text="{i18n>tabName3}" 
+						count="{masterView>/myRequestsCount}"
 						design="Vertical" 
 						showAll="false" 
 						textDirection="Inherit" 
@@ -65,7 +66,7 @@
 						visible="true" 
 						iconDensityAware="false">
 						<content>
-							
+							<core:Fragment fragmentName="cl.cgr.everis.developmentsCRGMisActivos.view.myRequestsTab" type="XML" />
 						</content>
 					</IconTabFilter>
 				</items>

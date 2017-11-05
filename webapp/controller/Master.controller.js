@@ -15,6 +15,7 @@ sap.ui.define([
 			//Buscamos RUT
 			oData.identity = this.getIdentity();
 			oData.currentTab = "tabFilter1";
+			oData.activeTable = "idAssetsTab";
 			//Subimos RUT al Modelo
 			var oModel = new JSONModel();
 			oModel.setData(oData);
@@ -26,41 +27,97 @@ sap.ui.define([
 			this._oFilter2 = new sap.ui.model.Filter("Tabsalida", sap.ui.model.FilterOperator.EQ, "02");
 			this._oFilter3 = new sap.ui.model.Filter("Tabsalida", sap.ui.model.FilterOperator.EQ, "03");
 			this._oFilter4 = new sap.ui.model.Filter("Zzrut", sap.ui.model.FilterOperator.EQ, oData.identity);
+			this._oFilter5 = new sap.ui.model.Filter("Tabsalida", sap.ui.model.FilterOperator.EQ, "05");
 			//Leemos Servicio en préstamo
 			//this.readService(vPath,this.doLoanModelCallback,[oFilter4,oFilter2]);
 			//Leemos Servicios para el count
 			var vPathCount = "/MisActivosSolSet/$count";
 			this.readService(vPathCount,this.doCountAssetsModelCallback,[this._oFilter4,this._oFilter1,this._oFilter3]);
 			this.readService(vPathCount,this.doCountLoansModelCallback,[this._oFilter4,this._oFilter2]);
+			this.readService(vPathCount,this.doCountReqModelCallback,[this._oFilter4,this._oFilter3,this._oFilter5]);
 			//Leemos servicio mis Activos
 			this.setBusyComponent(true,"idAssetsTab");
 			this.readService(vPath,this.doAssetsModelCallback,[this._oFilter4]);
 			//Creamos modelo de filtros
 			this.createFilterModel();
 		},
-		filterAssetsByTab: function(oFilter,vTab){
+		filterAssetsByTab: function(oFilter,vTab,vTemplate){
 			var tFilter = JSON.parse(JSON.stringify(oFilter));
 			var oTab = this.getView().byId(vTab);
 			if (oTab !== undefined){
 				var oBinding = oTab.getBinding("items");
 				oBinding.filter(tFilter);
-				//oTab.getBinding("rows").applyFilter();
-				//oBinding.applyFilter();
+				//Busco registros para actualizar el filtro
+				var oItems = oTab.getItems();
+				var tFilters = this.updateDynamicFilters(oItems,vTemplate);
+				this.setValueToViewModel("masterView","myCurrentFilters",tFilters);
 			}
+		},
+		updateDynamicFilters: function(tItems,vTemplate){
+			var oModel = this.getView().getModel("masterView");
+			var oData = oModel.getData();
+			var tFilters = JSON.parse(JSON.stringify(oData[vTemplate]));
+			//Para cada una de las columnas
+			for (var f = 0 ; f  < tFilters.length; f++){
+				//Buscamos los valores
+				for (var i=0; i < tItems.length; i++){
+					var value = oModel.getProperty(tFilters[f].field,tItems[i].getBindingContext("masterView"));
+					tFilters[f].items.push(value);
+				}
+			}
+			//Eliminamos repetidos
+			i = 0;
+			do {
+				//mData[i] = this.sliceFilter(mData[i]);
+				if (tFilters[i].items.length > 0){
+					tFilters[i].items = this.sliceFilter(tFilters[i].items);
+				}
+				i++;
+			}
+			while (i < 7);
+			//Convertimos los resultados en Json
+			for (var i1 = 0; i1 < tFilters.length; i1++) {
+				if (tFilters[i1].items){
+					var sTab = [];
+					 for (var j1 = 0; j1 < tFilters[i1].items.length; j1++) {
+					 	var sDat = {};
+						sDat.text = tFilters[i1].items[j1];
+						sDat.value = j1;
+						sTab.push(sDat);
+					 }	
+					 tFilters[i1].items = sTab;
+				}
+			}			
+			//Actualizamos filtros
+			return tFilters;
 		},
 		createFilterModel: function(){
 			var tFilters = [
-				{value: 0, field:"Anln1",text:this.getResourceBundle().getText("actCol1"), items:[]},
-				{value: 1, field:"Txt50", text:this.getResourceBundle().getText("actCol2"), items:[]},
-				{value: 2, field:"Zzserieamdo", text:this.getResourceBundle().getText("actCol3"), items:[]},
-				{value: 3, field:"ZzasignaUsu", text:this.getResourceBundle().getText("actCol4"), items:[]},
-				{value: 4, field:"ZzubicTecn", text:this.getResourceBundle().getText("actCol5"), items:[]},
-				{value: 5, field:"Pltxt", text:this.getResourceBundle().getText("actCol6"), items:[]},
-				{value: 6, field:"Zzestadotxt", text:this.getResourceBundle().getText("actCol7"), items:[]}
+				{value: 0, field:"Anln1"		,text:this.getResourceBundle().getText("actCol1"), items:[]},
+				{value: 1, field:"Txt50"		, text:this.getResourceBundle().getText("actCol2"), items:[]},
+				{value: 2, field:"Zzserieamdo"	, text:this.getResourceBundle().getText("actCol3"), items:[]},
+				{value: 3, field:"ZzasignaUsu"	, text:this.getResourceBundle().getText("actCol4"), items:[]},
+				{value: 4, field:"ZzubicTecn"	, text:this.getResourceBundle().getText("actCol5"), items:[]},
+				{value: 5, field:"Pltxt"		, text:this.getResourceBundle().getText("actCol6"), items:[]},
+				{value: 6, field:"Zzestadotxt"	, text:this.getResourceBundle().getText("actCol7"), items:[]}
+			];
+			var tFilters2 = [
+				{value: 0, field:"ZnroSolic"		, text:this.getResourceBundle().getText("reqCol1"), items:[]},
+				{value: 1, field:"Zfenvio"			, text:this.getResourceBundle().getText("reqCol2"), items:[]},
+				{value: 2, field:"Zperitxt"			, text:this.getResourceBundle().getText("reqCol3"), items:[]},
+				{value: 3, field:"Zanio"			, text:this.getResourceBundle().getText("reqCol4"), items:[]},
+				{value: 4, field:"Znotiftxt"		, text:this.getResourceBundle().getText("reqCol5"), items:[]},
+				{value: 5, field:"Zmotivo"			, text:this.getResourceBundle().getText("reqCol6"), items:[]},
+				{value: 6, field:"Zzrut"			, text:this.getResourceBundle().getText("reqCol7"), items:[]},
+				{value: 7, field:"ZzasignaUsu"		, text:this.getResourceBundle().getText("reqCol8"), items:[]},
+				{value: 8, field:"Zzdependencia"	, text:this.getResourceBundle().getText("reqCol9"), items:[]},
+				{value: 9, field:"Zestadotxt"		, text:this.getResourceBundle().getText("reqCol10"), items:[]},
+				{value: 10, field:"Zsolucion"		, text:this.getResourceBundle().getText("reqCol11"), items:[]}
 			];
 			var oModel = this.getView().getModel("masterView");
 			var oData = oModel.getData();
 			oData.myFilters = tFilters;
+			oData.myFiltersSol = tFilters2;
 			oModel.setData(oData);
 			this.getView().setModel(oModel,"masterView");
 		},
@@ -101,19 +158,23 @@ sap.ui.define([
 			var oMData = oModel.getData();
 			oMData.myAssets = oData.results;
 			//Actualizamos filtros
-			oMData.myAssetsFilters = controller.getAssetsFilters(oData.results,oMData.myFilters,controller);
+			//oMData.myAssetsFilters = controller.getAssetsFilters(oData.results,oMData.myFilters,controller);
+			//oMData.myCurrentFilters = JSON.parse(JSON.stringify(oMData.myAssetsFilters));
 			//Actualizamos modelo
 			oModel.setData(oMData);
 			controller.getView().setModel(oModel,"masterView");
 			controller.setBusyComponent(false,"idAssetsTab");
 			//Aplicar filtro inicial
-			controller.filterAssetsByTab([controller._oFilter1,controller._oFilter3],"idAssetsTab");
+			controller.filterAssetsByTab([controller._oFilter1,controller._oFilter3],"idAssetsTab","myFilters");
 		},
 		doCountAssetsModelCallback: function(oData,controller){
 			controller.setValueToViewModel("masterView","myAssetsCount",oData);
 		},
 		doCountLoansModelCallback: function(oData,controller){
 			controller.setValueToViewModel("masterView","myLoansCount",oData);
+		},
+		doCountReqModelCallback: function(oData,controller){
+			controller.setValueToViewModel("masterView","myRequestsCount",oData);
 		},
 		/*doLoanModelCallback: function(oData,controller){
 			//Pasamos data para componente formateado al componente tree
@@ -128,7 +189,7 @@ sap.ui.define([
 			oModel.setData(oMData);
 			controller.getView().setModel(oModel,"masterView");
 		},*/
-		getAssetsFilters: function(tData,tabFilters,controller){
+		/*getAssetsFilters: function(tData,tabFilters,controller){
 			var sData = {};
 			var tFilters = JSON.parse(JSON.stringify(tabFilters));
 			//var mData = [[],[],[],[],[],[],[]];
@@ -167,7 +228,7 @@ sap.ui.define([
 			//Actualizamos filtros
 			return tFilters;
 			//controller.updateAssetsFilters(mData,controller);
-		},
+		},*/
 		sliceFilter: function(oArray){
 			//return oArray.reduce(function(a,b){if(a.indexOf(b)<0)a.push(b);return a;},[]);
 			return oArray.reduce(function(a,b){if(a.indexOf(b)<0)a.push(b);return a;},[]).sort(function(a,b){return a > b;});
@@ -226,7 +287,32 @@ sap.ui.define([
 			this.onSelect("myAssets",false);
 		},
 		onSortAssets: function(oEvt){
-			
+			if (!this._oDialogSort) {
+				this._oDialogSort = sap.ui.xmlfragment("cl.cgr.everis.developmentsCRGMisActivos.view.AssetsSorts", this);
+			}
+			this._oDialogSort.setModel(this.getView().getModel("i18n"),"i18n");
+			this._oDialogSort.setModel(this.getView().getModel("masterView"),"masterView");
+			// toggle compact style
+			jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oDialogSort);
+			this._oDialogSort.open();			
+		},
+		handleSortConfirm: function (oEvent) {
+			var tSort = [];
+			var mParams = oEvent.getParameters();
+			var sPath = mParams.sortItem.getKey();
+			tSort.push(new sap.ui.model.Sorter(sPath, mParams.sortDescending));
+			//Buscamos tabla
+			var oModel = this.getView().getModel("masterView");
+			var oData = oModel.getData();
+			var oTable = this.getView().byId(oData.activeTable);
+			var oBinding = oTable.getBinding("items");
+			oBinding.sort(tSort);
+		},
+		handleSortCancel: function (oEvent) {
+
+		},
+		handleSortRefresh: function (oEvent) {
+
 		},
 		onFilterAssets: function(oEvt){
 			if (!this._oDialog) {
@@ -239,21 +325,14 @@ sap.ui.define([
 			this._oDialog.open();			
 		},
 		handleFilterCancel: function (oEvent) {
-			var oCustomFilter = this._oDialog.getFilterItems()[0];
-			if (this.filterPreviousValue !== this.filterResetValue) {
-				oCustomFilter.setFilterCount(1);
-				oCustomFilter.setSelected(true);
-			} else {
-				oCustomFilter.setFilterCount(0);
-				oCustomFilter.setSelected(false);
-			}
 		},
 		handleFilterConfirm: function (oEvent) {
 			var tFilters = [];
 			if (oEvent.getParameters().filterString) {
-				//MessageToast.show(oEvent.getParameters().filterString);
 				//Buscamos tabla
-				var oTable = this.getView().byId("myAssetsTab");
+				var oModel = this.getView().getModel("masterView");
+				var oData = oModel.getData();
+				var oTable = this.getView().byId(oData.activeTable);
 				//Buscamos filtros
 				var vParams = oEvent.getParameters();
 				if (vParams.filterItems){
@@ -273,7 +352,23 @@ sap.ui.define([
 		handleFilterReset: function(oEvent){
 			var tFilters = [];
 			//Buscamos tabla
-			var oTable = this.getView().byId("myAssetsTab");
+			var oModel = this.getView().getModel("masterView");
+			var oData = oModel.getData();
+			var oTable = this.getView().byId(oData.activeTable);
+			//
+			switch (oData.currentTab) {
+				case "tabFilter1":
+					tFilters = [this._oFilter1,this._oFilter3];
+					break;
+				case "tabFilter2":
+					tFilters = [this._oFilter2];
+					break;
+				case "tabFilter3":
+					tFilters = [this._oFilter5,this._oFilter3];
+					break;	
+				default:
+				tFilters = [];
+			}
 			//Aplicamos filtro
 			var oBinding = oTable.getBinding("items");
 			oBinding.filter(tFilters);	
@@ -317,17 +412,37 @@ sap.ui.define([
 			this.onPdf(vPath,vRut);
 		},
 		onSelectChanged: function(oEvt){
+			this.deleteDynamicFiters();
 			var vKey = oEvt.getParameter("key");
 			switch (vKey) {
 				case "tabFilter1":
-					this.filterAssetsByTab([this._oFilter1,this._oFilter3],"idAssetsTab");
+					this.filterAssetsByTab([this._oFilter1,this._oFilter3],"idAssetsTab","myFilters");
+					this.setValueToViewModel("masterView","activeTable","idAssetsTab");
 					break;
 				case "tabFilter2":
-					this.filterAssetsByTab([this._oFilter2],"idLoansTable");
+					this.filterAssetsByTab([this._oFilter2],"idLoansTable","myFilters");
+					this.setValueToViewModel("masterView","activeTable","idLoansTable");
 					break;
+				case "tabFilter3":
+					this.filterAssetsByTab([this._oFilter5,this._oFilter3],"idRequestsTable","myFiltersSol");
+					this.setValueToViewModel("masterView","activeTable","idRequestsTable");
+					break;	
 				default:
 			}
 			this.setValueToViewModel("masterView","currentTab",vKey);
+		},
+		deleteDynamicFiters: function(){
+			if (this._oDialog !== undefined){
+				var oCustomFilter = this._oDialog.getFilterItems();
+				if (oCustomFilter !== undefined){
+					oCustomFilter.forEach(function(items) {
+						var aItems = items.getItems();
+						aItems.forEach(function(item) {
+							item.setSelected(false);
+						});
+					});
+				}
+			}
 		},
 		OnExcelAssets: function(oEvt){
 			var oExport = new Export({

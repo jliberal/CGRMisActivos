@@ -8,13 +8,13 @@
 		items="{masterView>/myAssets}">
 		<headerToolbar>
 				<Toolbar>
-					<Title text="{i18n>ActTabTitle}" level="H2"/>
+					<Title text="{i18n>loansTabTitle}" level="H2"/>
 					<ToolbarSpacer/>
 					<OverflowToolbarButton type="Transparent" icon="sap-icon://multiselect-all" press="onSelectAllAssets"/>
 					<OverflowToolbarButton type="Transparent" icon="sap-icon://multiselect-none" press="onSelectNoneAssets"/>
 					<OverflowToolbarButton type="Transparent" icon="sap-icon://pdf-attachment" press="onPdfAssets"/>
 					<OverflowToolbarButton type="Transparent" icon="sap-icon://excel-attachment" press="OnExcelAssets"/>
-					<OverflowToolbarButton type="Transparent" icon="sap-icon://filter" press="onFilterLoans"/>
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://filter" press="onFilterAssets"/>
 					<OverflowToolbarButton type="Transparent" icon="sap-icon://sort" press="onSortAssets"/>
 					<SearchField
 						id="searchFieldLoan"

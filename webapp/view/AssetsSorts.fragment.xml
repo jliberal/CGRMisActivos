@@ -1,0 +1,16 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <ViewSettingsDialog
+		confirm="handleSortConfirm"
+		cancel="handleSortCancel"
+		sortItems="{masterView>/myCurrentFilters}"
+		resetFilters="handleSortReset">
+        <sortItems>
+            <ViewSettingsItem
+				text="{masterView>text}"
+				key="{masterView>field}">
+            </ViewSettingsItem>
+        </sortItems>
+    </ViewSettingsDialog>
+</core:FragmentDefinition>

@@ -10,7 +10,7 @@
             <ViewSettingsFilterItem
 				text="{masterView>text}"
 				key="{masterView>field}"
-				items="{masterView>items}">
+				items="{ path: 'masterView>items', templateShareable:false }">
             	<items>
             		<ViewSettingsItem text="{masterView>text}" key="{masterView>text}" />
             	</items>

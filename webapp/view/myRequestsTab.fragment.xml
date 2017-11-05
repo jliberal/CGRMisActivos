@@ -1,0 +1,79 @@
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core" 
+	xmlns:mvc="sap.ui.core.mvc" 
+	xmlns="sap.m"
+	height="100%"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	<Table id="idRequestsTable"  
+		items="{masterView>/myAssets}">
+		<headerToolbar>
+				<Toolbar>
+					<Title text="{i18n>requestsTabTitle}" level="H2"/>
+					<ToolbarSpacer/>
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://multiselect-all" press="onSelectAllAssets"/>
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://multiselect-none" press="onSelectNoneAssets"/>
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://pdf-attachment" press="onPdfAssets"/>
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://excel-attachment" press="OnExcelAssets"/>
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://filter" press="onFilterAssets"/>
+					<OverflowToolbarButton type="Transparent" icon="sap-icon://sort" press="onSortAssets"/>
+					<SearchField
+						id="searchFieldLoanR"
+						search="onSearchLocationAssets"
+						tooltip="{i18n>worklistSearchTooltip}"
+						width="auto"/>
+				</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column id="rnameColumn1">
+				<Text text="{i18n>reqCol1}" id="rtextColumn1" />
+			</Column>
+			<Column id="rnameColumn2">
+				<Text text="{i18n>reqCol2}" id="rtextColumn2" />
+			</Column>
+			<Column id="rnameColumn3">
+				<Text text="{i18n>reqCol3}" id="rtextColumn3" />
+			</Column>
+			<Column id="rnameColumn4">
+				<Text text="{i18n>reqCol4}" id="rtextColumn4" />
+			</Column>
+			<Column id="rnameColumn5">
+				<Text text="{i18n>reqCol5}" id="rtextColumn5" />
+			</Column>
+			<Column id="rnameColumn6">
+				<Text text="{i18n>reqCol6}" id="rtextColumn6" />
+			</Column>
+			<Column id="rnameColumn7">
+				<Text text="{i18n>reqCol7}" id="rtextColumn7" />
+			</Column>	
+			<Column id="rnameColumn8">
+				<Text text="{i18n>reqCol8}" id="rtextColumn8" />
+			</Column>
+			<Column id="rnameColumn9">
+				<Text text="{i18n>reqCol9}" id="rtextColumn9" />
+			</Column>
+			<Column id="rnameColumn10">
+				<Text text="{i18n>reqCol10}" id="rtextColumn10" />
+			</Column>
+			<Column id="rnameColumn11">
+				<Text text="{i18n>reqCol11}" id="rtextColumn11" />
+			</Column>				
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Text text="{masterView>ZnroSolic}" />
+					<Text text="{masterView>Zfenvio}" />
+					<Text text="{masterView>Zperitxt}" />
+					<Text text="{masterView>Zanio}" />
+					<Text text="{masterView>Znotiftxt}" />
+					<Text text="{masterView>Zmotivo}" />
+					<Text text="{masterView>Zzrut}" />
+					<Text text="{masterView>ZzasignaUsu}" />
+					<Text text="{masterView>Zzdependencia}" />
+					<Text text="{masterView>Zestadotxt}" />
+					<Text text="{masterView>Zsolucion}" />					
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</core:FragmentDefinition>
