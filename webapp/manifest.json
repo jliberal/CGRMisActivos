@@ -109,6 +109,14 @@
 						"master",
 						"detail"
 					]
+				},
+				{
+					"pattern": "notif",
+					"name": "notif",
+					"target": [
+						"master",
+						"notif"
+					]
 				}
 			],
 			"targets": {
@@ -119,6 +127,11 @@
 					"controlAggregation": "pages"
 				},
 				"detail": {
+					"viewName": "Detail",
+					"viewId": "detail",
+					"viewLevel": 1
+				},
+				"notif": {
 					"viewName": "Detail",
 					"viewId": "detail",
 					"viewLevel": 1

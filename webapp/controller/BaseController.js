@@ -3,8 +3,9 @@ sap.ui.define([
 		"sap/ui/core/mvc/Controller",
 		"sap/ui/core/routing/History",
 		"sap/m/MessageBox",
-		"sap/ui/model/json/JSONModel"
-	], function (Controller, History, MessageBox, JSONModel) {
+		"sap/ui/model/json/JSONModel",
+		'sap/m/MessageToast'
+	], function (Controller, History, MessageBox, JSONModel, MessageToast) {
 		"use strict";
 
 		return Controller.extend("cl.cgr.everis.developmentsCRGMisActivos.controller.BaseController", {
@@ -96,11 +97,25 @@ sap.ui.define([
 			},
 			setValueToViewModel: function(vModel,vField,oValue){
 				var oModel = this.getView().getModel(vModel);
-				this.setValueToModel(oModel,vField,oValue);
+				if (!oModel){
+					oModel = new JSONModel();
+					this.setValueToModel(oModel,vField,oValue);	
+					this.getView().setModel(oModel, vModel);
+				}else{
+					this.setValueToModel(oModel,vField,oValue);
+					this.getView().setModel(oModel, vModel);
+				}
 			},
 			setValueToCompModel: function(vModel,vField,oValue){
 				var oModel = this.getOwnerComponent().getModel(vModel);
-				this.setValueToModel(oModel,vField,oValue);
+				if (!oModel){
+					oModel = new JSONModel();
+					this.setValueToModel(oModel,vField,oValue);	
+					this.getOwnerComponent().setModel(oModel,vModel);
+				}else{
+					this.setValueToModel(oModel,vField,oValue);	
+					this.getOwnerComponent().setModel(oModel,vModel);
+				}
 			},
 			setValueToModel: function(oModel,vField,oValue){
 				var oData = oModel.getData();
@@ -115,6 +130,9 @@ sap.ui.define([
 						styleClass: bCompact ? "sapUiSizeCompact" : ""
 					}
 				);
+			},
+			showSuccess: function(vMessage){
+				MessageToast.show(vMessage);
 			},
 			readService: function(ivPath, callBack, filters){
 				var that = this;
@@ -135,7 +153,28 @@ sap.ui.define([
 						that.showServiceError(oError.response);
 					}
 				});
-			}		
+			},
+			executePostModel: function(lvPath,vData,CallBackS,CallBackE){
+				var that = this;
+				var oModel = this.getOwnerComponent().getModel();
+				oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+				oModel.setHeaders({
+					"DataServiceVersion": "2.0",
+					"MaxDataServiceVersion": "2.0",
+					"Accept": "application/json; charset=utf-8",
+					
+				});	
+				oModel.create(lvPath, vData, null, 
+					function(oData,oResponse){
+						that.setBusy(false);
+						CallBackS(oData, that);
+					},
+					function(oError){
+						that.setBusy(false);
+						CallBackE(oError, that);
+					}
+				);				
+			}
 		});
 	}
 );

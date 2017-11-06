@@ -9,7 +9,7 @@
 		id="AssetForm" 
 		layout="ResponsiveGridLayout" 
 		editable="true" 
-		visible="true"
+		visible="{masterData>/showSingleNotif}"
 		maxContainerCols="2" 
 		labelSpanL="3" 
 		labelSpanM="3" 

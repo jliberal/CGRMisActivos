@@ -42,6 +42,7 @@ sap.ui.define([
 			this.createFilterModel();
 		},
 		filterAssetsByTab: function(oFilter,vTab,vTemplate){
+			this.setValueToViewModel("masterView","initialFilters",oFilter);
 			var tFilter = JSON.parse(JSON.stringify(oFilter));
 			var oTab = this.getView().byId(vTab);
 			if (oTab !== undefined){
@@ -278,7 +279,7 @@ sap.ui.define([
 			
 		},
 		onFilter: function(oEvt){
-			
+
 		},
 		onSelectAllAssets: function(oEvt){
 			this.onSelect("myAssets",true);
@@ -342,6 +343,8 @@ sap.ui.define([
 						tFilters.push(oFilter);
 					}	
 				}
+				//Guardamos filtro
+				this.setValueToViewModel("masterView","dynamicFilters",tFilters);
 				//Creamos filtro
 				//var oFilter = new sap.ui.model.Filter("ZzubicTecn", sap.ui.model.FilterOperator.Contains, oEvt.getParameter("query"));
 				//Aplicamos filtro
@@ -374,7 +377,28 @@ sap.ui.define([
 			oBinding.filter(tFilters);	
 		},
 		onSearchLocationAssets: function(oEvt){
-			
+			var tInitial = [];
+			var tFilter = [];
+			var tQuery = [];
+			var oModel = this.getView().getModel("masterView");
+			var oData = oModel.getData();
+			var oTab = this.getView().byId(oData.activeTable);
+			var oBinding = oTab.getBinding("items");
+			tInitial = JSON.parse(JSON.stringify(oData.initialFilters));
+			if(oEvt.getParameter("query") !== ""){
+				for (var i = 0; i < oData.myCurrentFilters.length; i++ ){
+					var oFilter = new sap.ui.model.Filter(oData.myCurrentFilters[i].field, sap.ui.model.FilterOperator.Contains, oEvt.getParameter("query"));	
+					tQuery.push(oFilter);
+				}
+				tFilter.push( new sap.ui.model.Filter( {filters: tInitial, and: true} ) );
+				tQuery = new sap.ui.model.Filter(
+					{filters: tQuery, and: false}
+				);
+				tFilter.push(tQuery);
+				oBinding.filter(tFilter);
+			}else{
+				oBinding.filter(tInitial);
+			}
 		},
 		onTableNavigation: function(oEvent){
 			var oSource = oEvent.getSource();
@@ -387,9 +411,11 @@ sap.ui.define([
 				this.exportMasterModel(oData);
 				//Llamada a otra vista
 				var oRouter = this.getOwnerComponent().getRouter();
-	            oRouter.navTo("detail",{
-	            	"objectId": vAnln1 	
-	            },false);
+				oRouter.navTo("detail",{
+					"objectId": vAnln1 	
+				},false);
+				this.setValueToCompModel("masterData","showSingleNotif",true);
+				this.setValueToCompModel("masterData","showMultiNotif",false);
 			}else{
 				MessageToast.show(this.getResourceBundle().getText("notActive"));
 			}
@@ -444,6 +470,38 @@ sap.ui.define([
 				}
 			}
 		},
+		doPostSuccessCallback: function(oData,controller){
+			var vMessage = controller.getView().getModel("i18n").getResourceBundle().getText("NotifCreated");
+			vMessage = vMessage + " " + oData.IssueId;
+			//Reseteamos modelo
+			controller.resetViewModel();
+			//Mensaje de exito
+			controller.showSuccess(vMessage);
+		},
+		doPostErrorCallback: function(oError,controller){
+			if (oError === undefined){
+				var vMessage = controller.getView().getModel("i18n").getResourceBundle().getText("GenericError");
+				controller.showError(vMessage);
+			}else{
+				if (oError.response === undefined){
+					controller.showError(oError);
+				}else{
+					if (oError.response.body === undefined){
+						controller.showError(oError.response);
+					}else{
+						if (oError.response.body.message === undefined){
+							controller.showError(oError.response.body);
+						}else{
+							if (oError.response.body.message.value === undefined){
+								controller.showError(oError.response.body.message);
+							}else{
+								controller.showError(oError.response.message.value);
+							}
+						}
+					}	
+				}
+			}
+		},
 		OnExcelAssets: function(oEvt){
 			var oExport = new Export({
 				exportType : new ExportTypeCSV({
@@ -491,6 +549,33 @@ sap.ui.define([
 				}]
 			});
 			this.onExcel(oExport);
+		},
+		onNotifMult: function(oEvent){
+			var oModel = this.getView().getModel("masterView");
+			var oData = oModel.getData();
+			var oTab = this.getView().byId(oData.activeTable);
+			var oItems = oTab.getItems();
+			var tData = JSON.parse(JSON.stringify(oData.myAssets));
+			if(oData.currentTab === "tabFilter1"){
+				tData = tData.filter( function(item) {
+					if (item.Selec === true){
+						return item;
+					}
+				});
+				if (tData.length > 0){
+					this.setValueToCompModel("masterData","myAssetsSelected",tData);
+					this.setValueToCompModel("masterData","showSingleNotif",false);
+					this.setValueToCompModel("masterData","showMultiNotif",true);
+					//Llamada a otra vista
+					var oRouter = this.getOwnerComponent().getRouter();
+					oRouter.navTo("notif",{},false);				
+				}else{
+					MessageToast.show(this.getResourceBundle().getText("notSelected"));
+				}
+			}	
+			else{
+				MessageToast.show(this.getResourceBundle().getText("notTab1"));
+			}
 		}
 	});
 });

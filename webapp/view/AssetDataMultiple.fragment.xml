@@ -4,4 +4,49 @@
 	xmlns="sap.m"
 	height="100%"
 	xmlns:html="http://www.w3.org/1999/xhtml">
+	<Table id="idLoansTable"  
+		visible="{masterData>/showMultiNotif}"
+		items="{masterData>/myAssetsSelected}">
+		<headerToolbar>
+			<Toolbar>
+				<Title text="{i18n>SelTabTitle}" level="H3"/>
+			</Toolbar>
+		</headerToolbar>
+		<columns>
+			<Column id="LnameColumn1">
+				<Text text="{i18n>actCol1}" id="LtextColumn1" />
+			</Column>
+			<Column id="LnameColumn2">
+				<Text text="{i18n>actCol2}" id="LtextColumn2" />
+			</Column>
+			<Column id="LnameColumn3">
+				<Text text="{i18n>actCol3}" id="LtextColumn3" />
+			</Column>
+			<Column id="LnameColumn4">
+				<Text text="{i18n>actCol4}" id="LtextColumn4" />
+			</Column>
+			<Column id="LnameColumn5">
+				<Text text="{i18n>actCol5}" id="LtextColumn5" />
+			</Column>
+			<Column id="LnameColumn6">
+				<Text text="{i18n>actCol6}" id="LtextColumn6" />
+			</Column>
+			<Column id="LnameColumn7">
+				<Text text="{i18n>actCol7}" id="LtextColumn7" />
+			</Column>			
+		</columns>
+		<items>
+			<ColumnListItem>
+				<cells>
+					<Text text="{masterData>Anln1}" />
+					<Text text="{masterData>Txt50}" />
+					<Text text="{masterData>Zzserieampliado}" />
+					<Text text="{masterData>ZzasignaUsu}" />
+					<Text text="{masterData>ZzubicTecn}" />
+					<Text text="{masterData>Pltxt}" />
+					<Text text="{masterData>Zzestadotxt}" />
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>	
 </core:FragmentDefinition>
