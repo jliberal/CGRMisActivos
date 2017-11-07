@@ -16,6 +16,7 @@ sap.ui.define([
 			oData.identity = this.getIdentity();
 			oData.currentTab = "tabFilter1";
 			oData.activeTable = "idAssetsTab";
+			oData.pdfKey = "*01*03";
 			//Subimos RUT al Modelo
 			var oModel = new JSONModel();
 			oModel.setData(oData);
@@ -60,7 +61,7 @@ sap.ui.define([
 			var tFilters = JSON.parse(JSON.stringify(oData[vTemplate]));
 			//Para cada una de las columnas
 			for (var f = 0 ; f  < tFilters.length; f++){
-				//Buscamos los valores
+				//Buscamos los valores 
 				for (var i=0; i < tItems.length; i++){
 					var value = oModel.getProperty(tFilters[f].field,tItems[i].getBindingContext("masterView"));
 					tFilters[f].items.push(value);
@@ -245,7 +246,9 @@ sap.ui.define([
 		},
 		onPdf:  function(iPath,iRut){
 			//var vPath = iPath + "('" + iRut + "')/$value";
-			var vPath = iPath + "('" + iRut + "*01*03" +  "')/$value";
+			var oVModel = this.getView().getModel("masterView");
+			var oVData = oVModel.getData();
+			var vPath = iPath + "('" + oVData.currentTab + "*" + iRut + oVData.pdfKey +  "')/$value";
 			var oModel = this.getOwnerComponent().getModel();
 			vPath = oModel.sServiceUrl + vPath; 
 			sap.m.URLHelper.redirect(vPath, true);
@@ -390,12 +393,29 @@ sap.ui.define([
 					var oFilter = new sap.ui.model.Filter(oData.myCurrentFilters[i].field, sap.ui.model.FilterOperator.Contains, oEvt.getParameter("query"));	
 					tQuery.push(oFilter);
 				}
-				tFilter.push( new sap.ui.model.Filter( {filters: tInitial, and: true} ) );
+				/*tFilter.push( new sap.ui.model.Filter( {filters: tInitial, and: true} ) );
 				tQuery = new sap.ui.model.Filter(
 					{filters: tQuery, and: false}
 				);
-				tFilter.push(tQuery);
-				oBinding.filter(tFilter);
+				tFilter.push(tQuery);*/
+				var tFill1 = tInitial;
+				var tFill2 = tQuery;
+				var oFilterOr = new sap.ui.model.Filter(
+					{
+						filters: tFill2,
+						and: false
+					}
+				);
+				tFill1.push(oFilterOr);
+				/*var oFilterAnd = new sap.ui.model.Filter(
+					{
+						filters: tFill1,
+						and:true
+					}
+				);*/
+				//var filter = new sap.ui.model.Filter(tFill1,true);
+				//tFilter.push(oFilterAnd);
+				oBinding.filter(tFill1);
 			}else{
 				oBinding.filter(tInitial);
 			}
@@ -444,14 +464,17 @@ sap.ui.define([
 				case "tabFilter1":
 					this.filterAssetsByTab([this._oFilter1,this._oFilter3],"idAssetsTab","myFilters");
 					this.setValueToViewModel("masterView","activeTable","idAssetsTab");
+					this.setValueToViewModel("masterView","pdfKey","*01*03");
 					break;
 				case "tabFilter2":
 					this.filterAssetsByTab([this._oFilter2],"idLoansTable","myFilters");
 					this.setValueToViewModel("masterView","activeTable","idLoansTable");
+					this.setValueToViewModel("masterView","pdfKey","*02");
 					break;
 				case "tabFilter3":
 					this.filterAssetsByTab([this._oFilter5,this._oFilter3],"idRequestsTable","myFiltersSol");
 					this.setValueToViewModel("masterView","activeTable","idRequestsTable");
+					this.setValueToViewModel("masterView","pdfKey","*05*03");
 					break;	
 				default:
 			}
@@ -545,6 +568,74 @@ sap.ui.define([
 					name : this.getResourceBundle().getText("actCol6"),
 					template : {
 						content : "{Zzestadotxt}"
+					}	
+				}]
+			});
+			this.onExcel(oExport);
+		},
+		OnReqAssets: function(oEvt){
+			var oExport = new Export({
+				exportType : new ExportTypeCSV({
+					separatorChar : ";"
+				}),
+				models : this.getView().getModel("masterView"),
+				rows : {
+					path : "/myAssets"
+				},
+				columns : [{
+					name : this.getResourceBundle().getText("reqCol1"),
+					template : {
+						content : "{ZnroSolic}"
+					}
+				}, {
+					name : this.getResourceBundle().getText("reqCol2"),
+					template : {
+						content : "{Zfenvio}"
+					}
+				},{	
+					name : this.getResourceBundle().getText("reqCol3"),
+					template : {
+						content : "{Zperitxt}"
+					}
+				},{
+					name : this.getResourceBundle().getText("reqCol4"),
+					template : {
+						content : "{Zanio}"
+					}
+				},{
+					name : this.getResourceBundle().getText("reqCol5"),
+					template : {
+						content : "{Znotiftxt}"
+					}	
+				},{
+					name : this.getResourceBundle().getText("reqCol6"),
+					template : {
+						content : "{Zmotivo}"
+					}	
+				},{
+					name : this.getResourceBundle().getText("reqCol7"),
+					template : {
+						content : "{Zzrut}"
+					}
+				},{
+					name : this.getResourceBundle().getText("reqCol8"),
+					template : {
+						content : "{ZzasignaUsu}"
+					}
+				},{
+					name : this.getResourceBundle().getText("reqCol9"),
+					template : {
+						content : "{Zzdependencia}"
+					}	
+				},{
+					name : this.getResourceBundle().getText("reqCol10"),
+					template : {
+						content : "{Zestadotxt}"
+					}	
+				},{
+					name : this.getResourceBundle().getText("reqCol11"),
+					template : {
+						content : "{Zsolucion}"
 					}	
 				}]
 			});
