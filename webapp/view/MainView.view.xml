@@ -1,12 +1,3 @@
-<!--<mvc:View
-	controllerName="cl.cgr.everis.developmentsCRGMisActivos.controller.MainView"
-	xmlns:mvc="sap.ui.core.mvc"
-	displayBlock="true"
-	busy="{appView>/busy}"
-	busyIndicatorDelay="{appView>/delay}"
-	xmlns="sap.m">
-	<App id="rootControl" />
-</mvc:View>-->
 <mvc:View controllerName="cl.cgr.everis.developmentsCRGMisActivos.controller.MainView" 
 	xmlns:html="http://www.w3.org/1999/xhtml" 
 	xmlns:mvc="sap.ui.core.mvc"
@@ -14,5 +5,5 @@
 	xmlns="sap.m" 
 	busy="{appView>/busy}" 
 	busyIndicatorDelay="{appView>/delay}">
-	<App xmlns="sap.m" id="rootControl"/>
+	<App xmlns="sap.m" id="rootControl"/> 
 </mvc:View>

@@ -74,6 +74,7 @@
 		</semantic:content>
 		<semantic:customFooterContent>
 			<Button text="Notificar" 
+				id="notifButtonOut"
 				type="Accept" 
 				icon="sap-icon://save" 
 				iconDensityAware="false" 

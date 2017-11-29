@@ -44,36 +44,66 @@ sap.ui.define([
 				var oNotif = {};
 				oNotif.SolNotif = [];
 				if(oData.showSingleNotif === true){
-					var oItems = {};
-					oItems.Znotifica			= "";
-					oItems.Znotiftxt			= "";
-					oItems.Zfenvio				= "";
-					oItems.Zperiodo				= "";
-					oItems.Zperitxt				= "";
-					oItems.Zanio				= "";
-					oItems.ZnroSolic			= "";
-					oItems.Zmotivo				= "";
-					oItems.Zmottxt				= "";
-					oItems.Anln1				= oData.Anln1;
-					oItems.Txt50				= oData.Txt50;
-					oItems.Zzserieampliado		= oData.Zzserieampliado;
-					oItems.Zzrut				= oData.identity;
-					oItems.ZzasignaUsu			= oData.ZzasignaUsu;
-					oItems.Fecasig				= oData.Fecasig;
-					oItems.ZzubicTecn			= oData.ZzubicTecn;
-					oItems.Pltxt				= oData.Pltxt;
-					oItems.Zzestado				= oData.Zestadotxt;
-					oItems.Zzestadotxt			= "";
-					oItems.Zzdependencia		= "";
-					oItems.Zestado				= "";
-					oItems.Zestadotxt			= "";
-					oItems.Zsolucion			= "";
-					oItems.Tabsalida			= "";
-					oItems.Activo				= "";
-					oItems.Selec				= "";
-					oNotif.SolNotif.push(oItems);
+					var oItemsS = {};
+					oItemsS.Znotifica			= "";
+					oItemsS.Znotiftxt			= "";
+					oItemsS.Zfenvio				= "";
+					oItemsS.Zperiodo			= "";
+					oItemsS.Zperitxt			= "";
+					oItemsS.Zanio				= "";
+					oItemsS.ZnroSolic			= "";
+					oItemsS.Zmotivo				= "";
+					oItemsS.Zmottxt				= "";
+					oItemsS.Anln1				= oData.Anln1;
+					oItemsS.Txt50				= oData.Txt50;
+					oItemsS.Zzserieampliado		= oData.Zzserieampliado;
+					oItemsS.Zzrut				= oData.identity;
+					oItemsS.ZzasignaUsu			= oData.ZzasignaUsu;
+					oItemsS.Fecasig				= oData.Fecasig;
+					oItemsS.ZzubicTecn			= oData.ZzubicTecn;
+					oItemsS.Pltxt				= oData.Pltxt;
+					oItemsS.Zzestado			= oData.Zestadotxt;
+					oItemsS.Zzestadotxt			= "";
+					oItemsS.Zzdependencia		= "";
+					oItemsS.Zestado				= "";
+					oItemsS.Zestadotxt			= "";
+					oItemsS.Zsolucion			= "";
+					oItemsS.Tabsalida			= "";
+					oItemsS.Activo				= "";
+					oItemsS.Selec				= "";
+					oNotif.SolNotif.push(oItemsS);
 				}else if(oData .showMultiNotif === true){
-					oNotif.SolNotif = JSON.parse(JSON.stringify(oData.myAssetsSelected));
+					//oNotif.SolNotif = JSON.parse(JSON.stringify(oData.myAssetsSelected));
+					for(var i = 0; i < oData.myAssetsSelected.length; i++){
+						var oItems = {};
+						oItems.Znotifica			= "";
+						oItems.Znotiftxt			= "";
+						oItems.Zfenvio				= "";
+						oItems.Zperiodo				= "";
+						oItems.Zperitxt				= "";
+						oItems.Zanio				= "";
+						oItems.ZnroSolic			= "";
+						oItems.Zmotivo				= "";
+						oItems.Zmottxt				= "";
+						oItems.Anln1				= oData.myAssetsSelected[i].Anln1;
+						oItems.Txt50				= oData.myAssetsSelected[i].Txt50;
+						oItems.Zzserieampliado		= oData.myAssetsSelected[i].Zzserieampliado;
+						oItems.Zzrut				= oData.identit;
+						oItems.ZzasignaUsu			= oData.myAssetsSelected[i].ZzasignaUsu;
+						oItems.Fecasig				= oData.myAssetsSelected[i].Fecasig;
+						oItems.ZzubicTecn			= oData.myAssetsSelected[i].ZzubicTecn;
+						oItems.Pltxt				= oData.myAssetsSelected[i].Pltxt;
+						oItems.Zzestado				= oData.myAssetsSelected[i].Zestadotxt;
+						oItems.Zzestadotxt			= "";
+						oItems.Zzdependencia		= "";
+						oItems.Zestado				= "";
+						oItems.Zestadotxt			= "";
+						oItems.Zsolucion			= "";
+						oItems.Tabsalida			= "";
+						oItems.Activo				= "";
+						oItems.Selec				= "";
+						oNotif.SolNotif.push(oItems);						
+					}
 				}
 				//Data
 				oNotif.Zdescripcion			= oDataH.notifText;
@@ -85,6 +115,8 @@ sap.ui.define([
 				oNotif.Znroserie			= "";
 				oNotif.Zusuario				= "";
 				//Posteamos
+				this.setBusyComponent(true,"TypeId");
+				this.setBusyComponent(true,"notifButtonOut");
 				this.executePostModel(lvPath,oNotif,this.doPostSuccessCallback,this.doPostErrorCallback);
 			}
 		},
@@ -95,8 +127,14 @@ sap.ui.define([
 			controller.resetViewModel();
 			//Mensaje de exito
 			controller.showSuccess(vMessage);
+			controller.setBusyComponent(false,"TypeId");
+			controller.setBusyComponent(false,"notifButtonOut");
+			//Navegamos de regreso
+			controller.onNavBack();
 		},
 		doPostErrorCallback: function(oError,controller){
+			controller.setBusyComponent(false,"TypeId");
+			controller.setBusyComponent(false,"notifButtonOut");
 			if (oError === undefined){
 				var vMessage = controller.getView().getModel("i18n").getResourceBundle().getText("GenericError");
 				controller.showError(vMessage);
@@ -119,6 +157,37 @@ sap.ui.define([
 					}	
 				}
 			}
+		},
+		executePostModel: function(lvPath,vData,CallBackS,CallBackE){
+			var that = this;
+			var oModel = this.getOwnerComponent().getModel();
+			oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+			oModel.setHeaders({
+				"DataServiceVersion": "2.0",
+				"MaxDataServiceVersion": "2.0",
+				"Accept": "application/json; charset=utf-8"
+				
+			});	
+			/*oModel.create(lvPath, vData, null, 
+				function(oData,oResponse){
+					//that.setBusy(false);
+					CallBackS(oData, that);
+				},
+				function(oError){
+					//that.setBusy(false);
+					CallBackE(oError, that);
+				}
+			);*/
+			oModel.create(lvPath, vData,{ 
+				success: function(oData,oResponse){
+					//that.setBusy(false);
+					CallBackS(oData, that);
+				},
+				error: function(oError){
+					//that.setBusy(false);
+					CallBackE(oError, that);
+				}
+			});
 		},
 		resetViewModel: function(){
 			//Borramos modelo

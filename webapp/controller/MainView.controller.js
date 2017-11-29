@@ -1,7 +1,7 @@
 sap.ui.define([
 	"cl/cgr/everis/developmentsCRGMisActivos/controller/BaseController",
 	"sap/ui/model/json/JSONModel"
-], function(BaseController, JSONModel) {
+], function(BaseController, JSONModel) { 
 	"use strict";
 	return BaseController.extend("cl.cgr.everis.developmentsCRGMisActivos.controller.MainView", {
 		onInit : function () {

@@ -153,27 +153,6 @@ sap.ui.define([
 						that.showServiceError(oError.response);
 					}
 				});
-			},
-			executePostModel: function(lvPath,vData,CallBackS,CallBackE){
-				var that = this;
-				var oModel = this.getOwnerComponent().getModel();
-				oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
-				oModel.setHeaders({
-					"DataServiceVersion": "2.0",
-					"MaxDataServiceVersion": "2.0",
-					"Accept": "application/json; charset=utf-8",
-					
-				});	
-				oModel.create(lvPath, vData, null, 
-					function(oData,oResponse){
-						that.setBusy(false);
-						CallBackS(oData, that);
-					},
-					function(oError){
-						that.setBusy(false);
-						CallBackE(oError, that);
-					}
-				);				
 			}
 		});
 	}
