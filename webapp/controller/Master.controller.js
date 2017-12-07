@@ -43,7 +43,13 @@ sap.ui.define([
 			//Creamos modelo de filtros
 			this.createFilterModel();
 			//Router
-			this.getRouter().getRoute("master").attachPatternMatched(this._onObjectMatched, this);
+			this.getOwnerComponent().getRouter().getRoute("master").attachPatternMatched(this._onObjectMatched, this);
+		},
+		onRequest: function(oEvt){
+			//Deseleccionamos
+			this.onSelectNoneAssets();
+			var oRouter = this.getOwnerComponent().getRouter();
+			oRouter.navTo("solicit",{},false);
 		},
 		_onObjectMatched : function (oEvent) {
 			var oModel = this.getOwnerComponent().getModel("identityModel");

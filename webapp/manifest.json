@@ -97,7 +97,16 @@
 					"name": "master",
 					"target": [
 						"detail",
+						"solicit",
 						"master"
+					]
+				},
+				{
+					"pattern": "solicit",
+					"name": "solicit",
+					"target": [
+						"master",
+						"solicit"
 					]
 				},
 				{
@@ -127,6 +136,11 @@
 				"detail": {
 					"viewName": "Detail",
 					"viewId": "detail",
+					"viewLevel": 1
+				},
+				"solicit": {
+					"viewName": "Solicit",
+					"viewId": "solicit",
 					"viewLevel": 1
 				},
 				"notif": {

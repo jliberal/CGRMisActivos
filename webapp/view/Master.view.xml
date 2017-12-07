@@ -104,6 +104,12 @@
 			</IconTabBar>
 		</semantic:content>
 		<semantic:customFooterContent>
+			<Button text="Solicitar" 
+				id="solicitButtonOut"
+				type="Emphasized" 
+				icon="sap-icon://request" 
+				iconDensityAware="false" 
+				press="onRequest"/>
 			<Button text="Notificar" 
 				id="notifButtonOut"
 				type="Accept" 

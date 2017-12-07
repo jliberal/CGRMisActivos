@@ -13,7 +13,7 @@ sap.ui.define([
 			this.setBusyComponent(true,"cbNotif");
 			this.readService("/MisActivosTipSolSet",this.doNotifCBoxModelCallback,[]);
 			//Router
-			this.getRouter().getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
+			this.getOwnerComponent().getRouter().getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
 		},
 		_onObjectMatched : function (oEvent) {
 		},
