@@ -12,8 +12,14 @@ sap.ui.define([
 		onInit : function () {
 			//Importamos modelo
 			var oData = {};
+			var identityModel = this.getOwnerComponent().getModel("identityModel");
+			if (!identityModel){
+				this.getHeaderBeforeMe(this.doIdentityCallback);
+			}else{		
+				var identity = identityModel.getData();
+			}
 			//Buscamos RUT
-			oData.identity = this.getIdentity();
+			//oData.identity = this.getIdentity();
 			oData.currentTab = "tabFilter1";
 			oData.activeTable = "idAssetsTab";
 			oData.pdfKey = "*01*03";
@@ -27,20 +33,100 @@ sap.ui.define([
 			this._oFilter1 = new sap.ui.model.Filter("Tabsalida", sap.ui.model.FilterOperator.EQ, "01");
 			this._oFilter2 = new sap.ui.model.Filter("Tabsalida", sap.ui.model.FilterOperator.EQ, "02");
 			this._oFilter3 = new sap.ui.model.Filter("Tabsalida", sap.ui.model.FilterOperator.EQ, "03");
-			this._oFilter4 = new sap.ui.model.Filter("Zzrut", sap.ui.model.FilterOperator.EQ, oData.identity);
 			this._oFilter5 = new sap.ui.model.Filter("Tabsalida", sap.ui.model.FilterOperator.EQ, "05");
+			this._oFilter4 = new sap.ui.model.Filter("Tabsalida", sap.ui.model.FilterOperator.EQ, "04");
 			//Leemos Servicio en préstamo
 			//this.readService(vPath,this.doLoanModelCallback,[oFilter4,oFilter2]);
-			//Leemos Servicios para el count
-			var vPathCount = "/MisActivosSolSet/$count";
-			this.readService(vPathCount,this.doCountAssetsModelCallback,[this._oFilter4,this._oFilter1,this._oFilter3]);
-			this.readService(vPathCount,this.doCountLoansModelCallback,[this._oFilter4,this._oFilter2]);
-			this.readService(vPathCount,this.doCountReqModelCallback,[this._oFilter4,this._oFilter3,this._oFilter5]);
-			//Leemos servicio mis Activos
+			/*//Leemos servicio mis Activos
 			this.setBusyComponent(true,"idAssetsTab");
-			this.readService(vPath,this.doAssetsModelCallback,[this._oFilter4]);
+			this.readService(vPath,this.doAssetsModelCallback,[this._oFilter4]);*/
 			//Creamos modelo de filtros
 			this.createFilterModel();
+			//Router
+			this.getRouter().getRoute("master").attachPatternMatched(this._onObjectMatched, this);
+		},
+		_onObjectMatched : function (oEvent) {
+			var oModel = this.getOwnerComponent().getModel("identityModel");
+			var oDataM = oModel.getData();
+			if (oDataM){
+				if(oDataM.posted){
+					if(oDataM.posted === true){
+						oDataM.posted = false;
+						//mensaje
+						var vMessage = this.getView().getModel("i18n").getResourceBundle().getText("NotifCreated");
+						vMessage = vMessage + " " + oDataM.ZnroSolic;
+						MessageToast.show(vMessage);
+						//Deseleccionamos
+						this.onSelectNoneAssets();
+						//Recargamos modelo
+						//Leemos Servicios para el count
+						var vPathCount = "/MisActivosSolSet/$count";
+						this.readService(vPathCount,this.doCountAssetsModelCallback,[this._oFilteri,this._oFilter1,this._oFilter3]);
+						this.readService(vPathCount,this.doCountLoansModelCallback,[this._oFilteri,this._oFilter2,this._oFilter4]);
+						this.readService(vPathCount,this.doCountReqModelCallback,[this._oFilteri,this._oFilter3,this._oFilter4,this._oFilter5]);			
+						//Leemos servicio mis Activos
+						var vPath = "/MisActivosSolSet";
+						this.setBusyComponent(true,"idAssetsTab");
+						this.readService(vPath,this.doAssetsModelCallback,[this._oFilteri,this._oFilter1,this._oFilter3]);						
+					}					
+				}
+			}
+		},
+		getHeaderBeforeMe: function(callBack){
+			var oModel = new sap.ui.model.json.JSONModel();
+			var that = this;
+			jQuery.ajax({
+				type : "GET",
+				contentType : "application/json",
+				url : "/cgropen/institutional-assets/api/user",
+				dataType : "json",
+				async: false, 
+				success : function(data,textStatus, jqXHR) {
+					if ( data === "Undefined" ){
+						oModel.setData({modelData : { "iv-user": "Malcainor" }});//5824136-9
+					}else{
+						oModel.setData({modelData : data});
+					}
+					callBack(oModel, that);
+				},
+				error: function(error, jqXHR){
+					oModel.setData({modelData : {"iv-user": "Malcainor" }});
+					callBack(oModel, that);
+				}
+			});
+		},
+		doIdentityCallback: function(oModel,controller){
+			var oData = oModel.getData();
+			var vField = "iv-user";
+			oData.uname = oData.modelData[vField];
+			//Creamos modelo
+			controller.getOwnerComponent().setModel(oModel,"identityModel");
+			//Buscamos Datos de Hefestos
+			controller.getLoggedData(oData);
+		},
+		getLoggedData: function(oData){
+			var vVar = "iv-user";
+			var vPath = "/DataHefestosSet('" + oData.modelData[vVar] + "')";
+			this.readService(vPath,this.doLoggedModelCallback,[]);
+		},
+		doLoggedModelCallback: function(vData,controller){
+			var oModel = controller.getOwnerComponent().getModel("identityModel");
+			var oData = oModel.getData();
+			oData.fullName = vData.EvName;
+			oData.Rut = vData.Rut;
+			oData.Foto = vData.Foto;
+			oModel.setData(oData);
+			controller.getOwnerComponent().setModel(oModel,"identityModel");
+			controller._oFilteri = new sap.ui.model.Filter("Zzrut", sap.ui.model.FilterOperator.EQ, oData.Rut);
+			//Leemos Servicios para el count
+			var vPathCount = "/MisActivosSolSet/$count";
+			controller.readService(vPathCount,controller.doCountAssetsModelCallback,[controller._oFilteri,controller._oFilter1,controller._oFilter3]);
+			controller.readService(vPathCount,controller.doCountLoansModelCallback,[controller._oFilteri,controller._oFilter2,controller._oFilter4]);
+			controller.readService(vPathCount,controller.doCountReqModelCallback,[controller._oFilteri,controller._oFilter3,controller._oFilter4,controller._oFilter5]);			
+			//Leemos servicio mis Activos
+			var vPath = "/MisActivosSolSet";
+			controller.setBusyComponent(true,"idAssetsTab");
+			controller.readService(vPath,controller.doAssetsModelCallback,[controller._oFilteri,controller._oFilter1,controller._oFilter3]);
 		},
 		filterAssetsByTab: function(oFilter,vTab,vTemplate){
 			this.setValueToViewModel("masterView","initialFilters",oFilter);
@@ -367,10 +453,10 @@ sap.ui.define([
 					tFilters = [this._oFilter1,this._oFilter3];
 					break;
 				case "tabFilter2":
-					tFilters = [this._oFilter2];
+					tFilters = [this._oFilter2,this.oFilter4];
 					break;
 				case "tabFilter3":
-					tFilters = [this._oFilter5,this._oFilter3];
+					tFilters = [this._oFilter5,this._oFilter3,this.oFilter4];
 					break;	
 				default:
 				tFilters = [];
@@ -467,12 +553,12 @@ sap.ui.define([
 					this.setValueToViewModel("masterView","pdfKey","*01*03");
 					break;
 				case "tabFilter2":
-					this.filterAssetsByTab([this._oFilter2],"idLoansTable","myFilters");
+					this.filterAssetsByTab([this._oFilter2,this.oFilter4],"idLoansTable","myFilters");
 					this.setValueToViewModel("masterView","activeTable","idLoansTable");
 					this.setValueToViewModel("masterView","pdfKey","*02");
 					break;
 				case "tabFilter3":
-					this.filterAssetsByTab([this._oFilter5,this._oFilter3],"idRequestsTable","myFiltersSol");
+					this.filterAssetsByTab([this._oFilter5,this.oFilter4,this._oFilter3],"idRequestsTable","myFiltersSol");
 					this.setValueToViewModel("masterView","activeTable","idRequestsTable");
 					this.setValueToViewModel("masterView","pdfKey","*05*03");
 					break;	

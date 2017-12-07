@@ -1,8 +1,9 @@
 sap.ui.define([
 	"cl/cgr/everis/developmentsCRGMisActivos/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/Device"
-], function(BaseController, JSONModel, Device) {
+	"sap/ui/Device",
+	'sap/m/MessageToast'
+], function(BaseController, JSONModel, Device, MessageToast) {
 	"use strict";
 	return BaseController.extend("cl.cgr.everis.developmentsCRGMisActivos.controller.Detail", {
 		onInit : function () {
@@ -11,6 +12,10 @@ sap.ui.define([
 			//Buscamos modelo de combo notificación
 			this.setBusyComponent(true,"cbNotif");
 			this.readService("/MisActivosTipSolSet",this.doNotifCBoxModelCallback,[]);
+			//Router
+			this.getRouter().getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
+		},
+		_onObjectMatched : function (oEvent) {
 		},
 		doNotifCBoxModelCallback: function (oData,controller){
 			controller.setValueToViewModel("detailView","notifType",oData.results);
@@ -37,6 +42,8 @@ sap.ui.define([
 		doNotification: function(oEvent){
 			var lvPath = "/MisActivosCreaSolSet";
 			if (this.validateNotification()){
+				var oModelI = this.getOwnerComponent().getModel("identityModel");
+				var oDataI = oModelI.getData();
 				var oModel = this.getOwnerComponent().getModel("masterData");
 				var oData = oModel.getData();
 				var oModelH = this.getView().getModel("detailView");
@@ -57,7 +64,7 @@ sap.ui.define([
 					oItemsS.Anln1				= oData.Anln1;
 					oItemsS.Txt50				= oData.Txt50;
 					oItemsS.Zzserieampliado		= oData.Zzserieampliado;
-					oItemsS.Zzrut				= oData.identity;
+					oItemsS.Zzrut				= oData.Zzrut;
 					oItemsS.ZzasignaUsu			= oData.ZzasignaUsu;
 					oItemsS.Fecasig				= oData.Fecasig;
 					oItemsS.ZzubicTecn			= oData.ZzubicTecn;
@@ -88,7 +95,7 @@ sap.ui.define([
 						oItems.Anln1				= oData.myAssetsSelected[i].Anln1;
 						oItems.Txt50				= oData.myAssetsSelected[i].Txt50;
 						oItems.Zzserieampliado		= oData.myAssetsSelected[i].Zzserieampliado;
-						oItems.Zzrut				= oData.identit;
+						oItems.Zzrut				= oData.myAssetsSelected[i].zzrut;
 						oItems.ZzasignaUsu			= oData.myAssetsSelected[i].ZzasignaUsu;
 						oItems.Fecasig				= oData.myAssetsSelected[i].Fecasig;
 						oItems.ZzubicTecn			= oData.myAssetsSelected[i].ZzubicTecn;
@@ -107,13 +114,13 @@ sap.ui.define([
 				}
 				//Data
 				oNotif.Zdescripcion			= oDataH.notifText;
-				oNotif.IvRut				= oData.identity;
+				oNotif.IvRut				= oDataI.Rut;
 				oNotif.Znotifica			= oDataH.notifTypeSelected;
 				oNotif.Zmotivo				= oDataH.notifCauseSelected;
 				oNotif.Zdescripbien			= "";
 				oNotif.Znrobien				= "";	
 				oNotif.Znroserie			= "";
-				oNotif.Zusuario				= "";
+				oNotif.Zusuario				= oDataI.uname;
 				//Posteamos
 				this.setBusyComponent(true,"TypeId");
 				this.setBusyComponent(true,"notifButtonOut");
@@ -121,16 +128,23 @@ sap.ui.define([
 			}
 		},
 		doPostSuccessCallback: function(oData,controller){
-			var vMessage = controller.getView().getModel("i18n").getResourceBundle().getText("NotifCreated");
-			vMessage = vMessage + " " + oData.IssueId;
+			/*var vMessage = controller.getView().getModel("i18n").getResourceBundle().getText("NotifCreated");
+			vMessage = vMessage + " " + oData.ZnroSolic;
+			MessageToast.show(vMessage);*/
 			//Reseteamos modelo
 			controller.resetViewModel();
 			//Mensaje de exito
-			controller.showSuccess(vMessage);
+			//controller.showSuccess(vMessage);
 			controller.setBusyComponent(false,"TypeId");
 			controller.setBusyComponent(false,"notifButtonOut");
 			//Navegamos de regreso
-			controller.onNavBack();
+			var oModel = controller.getOwnerComponent().getModel("identityModel");
+			var oDataM = oModel.getData();
+			oDataM.posted = true;
+			oModel.setData(oDataM);
+			controller.getOwnerComponent().setModel(oModel,"identityModel");
+			controller.getRouter().navTo("master", {post: true}, true);
+			//controller.onNavBack();
 		},
 		doPostErrorCallback: function(oError,controller){
 			controller.setBusyComponent(false,"TypeId");

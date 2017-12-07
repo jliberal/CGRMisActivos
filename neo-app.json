@@ -29,6 +29,15 @@
         "entryPath": "/"
       },
       "description": "URL Contraloria"
+    },
+    {
+      "path": "/sap/opu/odata",
+      "target": {
+        "type": "destination",
+        "name": "Contraloria",
+        "entryPath": "/sap/opu/odata"
+      },
+      "description": "Contraloria Gateway"
     }
   ],
   "sendWelcomeFileRedirect": true
